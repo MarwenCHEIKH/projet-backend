@@ -1,0 +1,57 @@
+{
+  "users": [
+    {
+      "username": "marwen",
+      "email": "m@gmail.com",
+      "password": "$2b$10$U.c1UMLKY9zmutNgXvK1T.XYgy9e4plVFMWteJp0RTPxRtyjPzsmi",
+      "models": [],
+      "VFD": []
+    },
+    {
+      "username": "marwen27",
+      "email": "mar@gmail.com",
+      "password": "$2b$10$gYHbhkvNIF4aSrXZSc2XCu9aNNg28vdoi.DPZQbTZq9idHyzIl08i",
+      "models": [],
+      "VFD": [
+        {
+          "dir_path": "zazaz",
+          "alias": "dfg",
+          "comments": "hdg",
+          "mount_point": false,
+          "mount_dir_path": "hdh",
+          "user_attribute": "hfdh",
+          "mailbox_recording": "Y",
+          "filename_display_option": "XFB",
+          "filename_duplicate_policy": "duplicate",
+          "env": "UAT"
+        },
+        {
+          "dir_path": "gf",
+          "alias": "dfg",
+          "comments": "hdg",
+          "mount_point": false,
+          "mount_dir_path": "hdh",
+          "user_attribute": "hfdh",
+          "mailbox_recording": "Y",
+          "filename_display_option": "XFB",
+          "filename_duplicate_policy": "duplicate",
+          "env": "UAT"
+        }
+      ]
+    },
+    {
+      "username": "marwen1234",
+      "email": "marwen@gmail.com",
+      "password": "$2b$10$wk7.QcbAuwD8WTwdQV3r0OhfYqFGSPc8qIcKi824g4Z/H5KJ9J9za",
+      "models": [],
+      "VFD": []
+    },
+    {
+      "username": "marwen12",
+      "email": "new@gmail.com",
+      "password": "$2b$10$YzgZLpOrubRydbVJLVheJeKlZ1QMnNNVhQX3dYauwjjx8lWPtCH.G",
+      "models": [],
+      "VFD": []
+    }
+  ]
+}
