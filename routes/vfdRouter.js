@@ -2,11 +2,7 @@ const express = require("express");
 const SSHService = require("../services/SSHService");
 const router = express.Router();
 const cors = require("cors");
-const {
-  createDircomm,
-  updateDircomm,
-  moveDircomm,
-} = require("../commands/vfdCommands");
+const { dircomm } = require("../commands/vfdCommands");
 const dbUtils = require("../services/dbUtils");
 
 router.use(cors());
@@ -23,15 +19,14 @@ router.post("/create-directory", async (req, res) => {
     const serverConfig = service.getServerConfig(env);
     const commandString = service.generateCommand(
       "vfdadm create_dir",
-      createDircomm,
+      dircomm,
       formDataObject
     );
+    await service.connect(serverConfig);
+    await service.executeCommand(commandString);
     res
       .status(200)
       .json({ message: "Command executed successfully", commandString });
-
-    await service.connect(serverConfig);
-    await service.executeCommand(commandString);
   } catch (error) {
     res.status(500).json({ error: error.message });
   } finally {
@@ -47,7 +42,7 @@ router.post("/update-directory", async (req, res) => {
     const serverConfig = service.getServerConfig(env);
     const commandString = service.generateCommand(
       "vfdadm update_dir",
-      updateDircomm,
+      dircomm,
       formDataObject
     );
 
@@ -84,7 +79,7 @@ router.post("/move-directory", async (req, res) => {
     const serverConfig = service.getServerConfig(env);
     const commandString = service.generateCommand(
       "vfdadm move_dir",
-      moveDircomm,
+      dircomm,
       formDataObject
     );
 
@@ -121,7 +116,7 @@ router.post("/delete-directory", async (req, res) => {
     const serverConfig = service.getServerConfig(env);
     const commandString = service.generateCommand(
       `vfdadm delete_dir -mp "N" -mdp ""`,
-      moveDircomm,
+      dircomm,
       formDataObject
     );
     dbUtils.deleteObjectFromArray(

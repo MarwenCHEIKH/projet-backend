@@ -81,15 +81,17 @@ class SSHService {
     const commandParts = [];
 
     for (const key in formData) {
-      if (key in commobj && formData[key] != "") {
+      if (key in commobj && formData[key] !== "") {
         const value = formData[key];
-        commandParts.push(`${commobj[key]} "${value}"`);
+        const formattedValue = typeof value === "string" ? `"${value}"` : value;
+        commandParts.push(`${commobj[key]} ${formattedValue}`);
       }
     }
 
     const command = `${comm} ${commandParts.join(" ")}`;
     return command;
   }
+
   closeConnection() {
     this.conn.end();
   }
