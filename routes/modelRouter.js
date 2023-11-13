@@ -6,21 +6,21 @@ const {
   filterEmptyAttributes,
   generateCommand,
 } = require("../services/modelService");
+const { getModels } = require("../services/modelService");
 const dbUtils = require("../services/dbUtils");
 
 router.use(express.json());
 const service = new SSHService();
 
+const models = getModels();
+
 router.post("/create-model", async (req, res) => {
   const formDataObject = req.body;
 
   if (
-    formDataObject.protocol == "GENERAL" &&
-    dbUtils.getObjectFromArray(
-      req.user.username,
-      "models",
-      "model_name",
-      formDataObject.model_name
+    (await models).find(
+      (m) =>
+        m.protocol == "GENERAL" && m.model_name == formDataObject.model_name
     )
   ) {
     return res.status(400).json({ error: "Model name already used" });
@@ -35,17 +35,16 @@ router.post("/create-model", async (req, res) => {
         formDataObject
       );
 
-      // await service.connect(serverConfig);
-      // await service.executeCommand(commandString);
+      await service.connect(serverConfig);
+      await service.executeCommand(commandString);
       res
         .status(200)
         .json({ message: "Command executed successfully", commandString });
     } catch (error) {
       res.status(500).json({ error: error.message });
+    } finally {
+      service.closeConnection();
     }
-    // finally {
-    //   service.closeConnection();
-    // }
   }
 });
 
@@ -61,17 +60,16 @@ router.post("/update-model", async (req, res) => {
       formDataObject
     );
 
-    // await service.connect(serverConfig);
-    // await service.executeCommand(commandString);
+    await service.connect(serverConfig);
+    await service.executeCommand(commandString);
     res
       .status(200)
       .json({ message: "Command executed successfully", commandString });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    service.closeConnection();
   }
-  // finally {
-  //   service.closeConnection();
-  // }
 });
 
 router.post("/delete-model-attributes", async (req, res) => {
@@ -86,17 +84,16 @@ router.post("/delete-model-attributes", async (req, res) => {
       formDataObject
     );
 
-    // await service.connect(serverConfig);
-    // await service.executeCommand(commandString);
+    await service.connect(serverConfig);
+    await service.executeCommand(commandString);
     res
       .status(200)
       .json({ message: "Command executed successfully", commandString });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    service.closeConnection();
   }
-  // finally {
-  //   service.closeConnection();
-  // }
 });
 router.post("/delete-model", async (req, res) => {
   const formDataObject = req.body;
@@ -110,34 +107,22 @@ router.post("/delete-model", async (req, res) => {
       formDataObject
     );
 
-    // await service.connect(serverConfig);
-    // await service.executeCommand(commandString);
+    await service.connect(serverConfig);
+    await service.executeCommand(commandString);
     res
       .status(200)
       .json({ message: "Command executed successfully", commandString });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  } finally {
+    service.closeConnection();
   }
-  // finally {
-  //   service.closeConnection();
-  // }
 });
 
 router.get("/get-models", (req, res) => {
-  // replace this with the getModels() function from modelService example usage:
-  // modelService.getModels().then((models) => {
-  //   console.log('Models:', models);
-  // });
-  const user = dbUtils.getUserByUsername(req.user.username);
-
-  if (!user) {
-    res.status(404).send("User not found");
-  } else if (!user.models) {
-    res.send("No directories found for this user");
-  } else {
-    const models = user.models;
+  getModels().then((models) => {
     res.send(models);
-  }
+  });
 });
 
 module.exports = router;
