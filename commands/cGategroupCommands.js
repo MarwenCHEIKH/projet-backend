@@ -1,0 +1,27 @@
+cGateGroupCommands = {
+  name: "-n",
+  comments: "-cts",
+  parent_group: "-pg",
+  state: "-s",
+  protocol: "-pr",
+  called_addr: "-ceda",
+  sap: "-sap",
+  http_host_name: "-hhn",
+  template_site: "-ts",
+  root_dir: "-rd",
+  home_dir: "-hd",
+  user_param1: "-usp1",
+  user_param2: "-usp2",
+  http_home_page: "-hhp",
+  http_list_template: "-hlt",
+  max_download_rate: "-max_downr",
+  max_download_requests_rate: "-maxdownreqr",
+  max_upload_rate: "-max_upr",
+  max_upload_requests_rate: "-maxupreqr",
+  max_upload_file_size: "-max_upload_file_size",
+  command_sensitivity: "-cmd_s",
+  add_vfd_right: "-avr",
+  add_calling_addr: "-acinga",
+};
+
+module.exports = { cGateGroupCommands };

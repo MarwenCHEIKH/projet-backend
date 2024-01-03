@@ -1,67 +1,91 @@
-const SSHService = require("../services/SSHService");
+const SSHService = require("./SSHService");
 const service = new SSHService();
 
-function filterEmptyAttributes(obj) {
-  return Object.entries(obj).reduce((acc, [key, value]) => {
-    // Only include non-empty attributes in the new object
-    if (value !== "") {
-      acc[key] = value;
-    }
-    return acc;
-  }, {});
-}
-
-function generateCommand(comm, commobj, formData) {
-  const commandParts = [];
-
-  for (const key in formData) {
-    if (key in commobj && commobj[key] && formData[key] === true) {
-      commandParts.push(`${commobj[key]}`);
-    } else if (
-      key in commobj &&
-      commobj[key] &&
-      typeof formData[key] === "string"
-    ) {
-      const value = formData[key];
-      commandParts.push(`${commobj[key]} "${value}"`);
-    }
+class ModelService {
+  filterEmptyAttributes(obj) {
+    return Object.entries(obj).reduce((acc, [key, value]) => {
+      if (value !== "") {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
   }
 
-  const command = `${comm} ${commandParts.join(" ")}`;
-  return command;
-}
-async function getModels() {
-  const modelsArray = [];
+  generateCommand(comm, commobj, formData) {
+    const commandParts = [];
 
-  try {
-    // Connect to the SSH server using the UAT configuration
-    await service.connect(service.getServerConfig("UAT"));
-
-    // Execute the command and get the output
-    const commandOutput = await service.executeCommand("peldsp select_model");
-
-    // Use parseCommandOutput to get parsed data
-    const parsedData = service.parseCommandOutput(commandOutput);
-
-    // Iterate through each parsed line
-    for (const data of parsedData) {
-      // Check if both model_name and protocol are present
-      if (data.length >= 2) {
-        // Extract model_name and protocol from the parsed data
-        const [model_name, protocol] = data;
-
-        // Push the model object into the array
-        modelsArray.push({ model_name, protocol });
+    for (const key in formData) {
+      if (key in commobj && commobj[key] && formData[key] === true) {
+        commandParts.push(`${commobj[key]}`);
+      } else if (
+        key in commobj &&
+        commobj[key] &&
+        typeof formData[key] === "string"
+      ) {
+        const value = formData[key];
+        commandParts.push(`${commobj[key]} "${value}"`);
       }
     }
-  } catch (error) {
-    console.error("Error:", error);
-  } finally {
-    // Close the SSH connection
-    service.closeConnection();
+
+    const command = `${comm} ${commandParts.join(" ")}`;
+    return command;
   }
 
-  return modelsArray;
+  async getAllModels() {
+    const modelsArray = [];
+    try {
+      await service.connect(service.getServerConfig("UAT"));
+      const commandOutput = await service.executeCommand("peldsp select_model");
+      const parsedData = service.parseCommandOutput(commandOutput);
+      for (const data of parsedData) {
+        const [model_name, protocol] = data;
+        modelsArray.push({ model_name, protocol });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      service.closeConnection();
+    }
+    return modelsArray;
+  }
+
+  async getModelsByProtocol(protocol) {
+    const modelsArray = [];
+    try {
+      await service.connect(service.getServerConfig("UAT"));
+      const commandOutput = await service.executeCommand(
+        `peldsp select_model -pr '${protocol}'`
+      );
+      const parsedData = service.parseCommandOutput(commandOutput);
+      for (const model_name of parsedData) {
+        modelsArray.push({ model_name, protocol });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      service.closeConnection();
+    }
+    return modelsArray;
+  }
+
+  async getPurgeModels() {
+    const modelsArray = [];
+    try {
+      await service.connect(service.getServerConfig("UAT"));
+      const commandOutput = await service.executeCommand(
+        "peldsp select_purge_model"
+      );
+      const parsedData = service.parseCommandOutput(commandOutput);
+      for (const model_name of parsedData) {
+        modelsArray.push(model_name);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      service.closeConnection();
+    }
+    return modelsArray;
+  }
 }
 
-module.exports = { filterEmptyAttributes, generateCommand, getModels };
+module.exports = ModelService;
